@@ -7,14 +7,18 @@ class UsersController < ApplicationController
 
     if user.save
       token = JsonWebToken.encode(user_id: user.id)
-      render json: { user: user, token: token }
+
+      render json: user,
+             serializer: UserSerializer,
+             meta: { token: token },
+             status: :created
     else
       render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   def me
-    render json: @current_user
+    render json: @current_user, serializer: UserSerializer
   end
 
   private
